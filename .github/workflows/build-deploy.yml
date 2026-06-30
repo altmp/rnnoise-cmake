@@ -13,7 +13,7 @@ jobs:
           xmake-version: latest
 
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
         with:
           submodules: recursive
 
@@ -36,14 +36,14 @@ jobs:
           copy build\windows\x64\debug\rnnoise.lib upload\lib\debug
           copy include\rnnoise.h upload\include
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v7
         with:
           name: rnnoise-windows
           path: ./upload/
 
   build-linux:
     name: Build linux release
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Install XMake
         uses: xmake-io/github-action-setup-xmake@v1
@@ -51,7 +51,7 @@ jobs:
           xmake-version: latest
 
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
         with:
           submodules: recursive
 
@@ -68,28 +68,28 @@ jobs:
           cp ./build/linux/x64/release/rnnoise.a ./upload/lib
           cp ./include/rnnoise.h ./upload/include
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v7
         with:
           name: rnnoise-linux
           path: ./upload/
 
   create-release:
     name: Create GitHub Release
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: [build-linux, build-windows]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
         with:
           submodules: recursive
       - name: Download windows artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v7
         with:
           name: rnnoise-windows
           path: dist-windows
 
       - name: Download linux artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v7
         with:
           name: rnnoise-linux
           path: dist-linux
@@ -108,7 +108,7 @@ jobs:
 
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1
+        uses: actions/create-release@v1.1.4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -137,12 +137,12 @@ jobs:
 
   delete-artifacts:
     name: Delete artifacts
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: [ create-release ]
     if: ${{ always() }}
     steps:
       - name: Delete artifacts
-        uses: geekyeggo/delete-artifact@v2
+        uses: geekyeggo/delete-artifact@v6
         with:
           name: |
             rnnoise-linux
